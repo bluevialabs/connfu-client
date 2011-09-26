@@ -1,0 +1,94 @@
+#!/usr/bin/env ruby
+
+$:.unshift(File.expand_path(File.dirname(File.realpath(__FILE__)) + '/../lib'))
+
+require "gli"
+
+require "connfu/version"
+require "connfu/cli/generator"
+
+include GLI
+
+program_desc "connfu-client provides an easy way to manage and the fetch events in any of your connFu applications."
+
+version Connfu::VERSION
+
+desc "Be verbose my friend"
+switch :v
+
+desc "Use scaffold to create a basic application that listens to all the available connFu channels"
+long_desc <<EOS
+  
+  Use scaffold to create a basic application that listens to all the available connFu channels.
+  A connFu application can listen to one or more channels.
+  Each channel will launch the application logic based on the event fetched using the streaming endpoint that belongs to the application.
+  You need a valid application token that can be retrieved in connFu web portal, http://www.connfu.com
+\n
+EOS
+
+arg_name "project_name"
+command :scaffold do |c|
+  c.desc 'Channels the application should listen to'
+  c.default_value ":all"
+  c.flag :c
+
+  c.desc 'Main file that will contain the application logic'
+  c.default_value 'application.rb'
+  c.flag :f
+  
+  c.action do |global_options, options, args|
+    if args.length < 1
+      puts c.long_description
+      usage = "Usage:"
+      usage << "\n  #{$0} #{c.name} <application-name>"
+      usage << "\n\nOptions:"
+
+      c.switches.each do |s|
+        usage << "\n     -#{s[0]}: #{s[1].description}"
+      end
+      
+      c.flags.each do |f|
+        usage << "\n     -#{f[0]}: #{f[1].description}. Default value: #{f[1].default_value}"
+      end
+      
+      usage << "\n\n"
+      puts usage
+      raise ""
+    end
+    puts "    #{green("create")} #{args[0]}"
+
+    Connfu::Cli::Generator.run(args[0], nil, options[:f])
+
+    puts "    #{green("create")} #{options[:f]}"
+
+    puts "    #{green("Application created!!")}"
+    puts "\n"
+    
+
+    # Your command logic here
+     
+    # If you have any errors, just raise them
+    # raise "that command made no sense"
+  end
+end
+
+pre do |global, command, options, args|
+  puts "Executing #{command.name}" if global[:v]
+  true
+end
+
+post do |global, command, options, args|
+  puts "Executed #{command.name}" if global[:v]
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  true
+end
+
+def green(text)
+  "\e[32m#{text}\e[0m"
+end
+
+exit GLI.run(ARGV)

@@ -1,0 +1,398 @@
+
+== Welcome to connFu
+
+connFu gem provides an easy way to get access to connFu platform using the defined DSL and the provisioning API.
+
+connFu is a platform of Telefonica delivered by Bluevia Labs.
+Please, check out http://www.connfu.com and if you need further information do not hesitate to contact us at *support* *at* *connfu* *dot* *com*
+
+=== Why connFu?
+
+* *Mash* *voice*, *data*, *text* *and* *social* *streams* like never before
+
+* *Develop* *apps* *swiftly* – connFu does all the heavy lifting
+
+* *Merge* social, voice and text channels into single streams
+
+* *Global* *reach* – choose phone numbers from around the world
+
+* *Economy* *of* *code* – do more with less
+
+=== Use connFu to build...
+
+* Apps that turn *social* *signals* into calls and voice messages
+
+* *Group* *communication* apps (voice, text, social)
+
+* *Real*-*time* collaboration tools
+
+* *Voice* *apps* controlled by Twitter
+
+* *CRM* *applications* (including call recording)
+
+== Getting started
+
+You can download the connFu-client gem directly from rubygems:
+
+    gem install connfu-client
+
+== Introduction
+
+This gem has two different aims:
+
+* *connFu* *DSL*: enables an easy way to create a connFu application.
+* *connFu* *provisioning* *API* *client*: wrapper to REST connFu API to manage applications.
+
+== connFu DSL
+
+connFu DSL allows you to create really powerful applications in just a few lines of code.
+
+=== How to create an application
+
+1. Create an application using the connFu web portal
+2. Get the application token
+3. Create an application scaffold using the connfu-client CLI:
+
+    connfu-client scaffold hello-world
+
+4. Update the code generated in hello-world/application.rb with your valid application token:
+
+	token = "YOUR-VALID-CONNFU-TOKEN"
+
+4. Run the code:
+
+	ruby application.rb
+
+5. You'll get as output something like:
+
+    I, [2011-09-26T14:39:24.523208 #43421]  INFO -- : Starting application with token 28d540c53b522e162d07baae0809115a
+    D, [2011-09-26T14:39:26.631370 #43421] DEBUG -- : The application devel-juan-1 has these channels: []
+    D, [2011-09-26T14:39:26.638779 #43421] DEBUG -- : Dispatcher initializer
+    D, [2011-09-26T14:39:26.638870 #43421] DEBUG -- : Dispatcher starts
+    D, [2011-09-26T14:39:26.639365 #43421] DEBUG -- : Dispatcher waiting for a message from the Listener
+    D, [2011-09-26T14:39:26.647047 #43421] DEBUG -- : Listener starts...
+    D, [2011-09-26T14:39:26.647200 #43421] DEBUG -- : Waiting for a message from connFu stream
+    D, [2011-09-26T14:39:26.647437 #43421] DEBUG -- : Connfu::ConnfuStream opening connection to  stream.connfu.com:443
+    D, [2011-09-26T14:39:26.647535 #43421] DEBUG -- : Connfu::ConnfuStream start listening to stream /connfu-stream-devel-juan-1
+
+=== Handling channels
+
+A connFu channel is the way to retrieve inbound events related to the resources mapped to the application.
+
+Actually there are three available channel types:
+
+* *Voice*: retrieves events related to calls and inbound sms to a specific number
+* *Twitter*: retrieves tweets related to one or more twitter accounts
+* *RSS*: retrieves new posts in a RSS feed
+
+An application should listen at least one kind of channel.
+
+=== Handling voice channels
+
+A voice channel has four related events:
+
+* *voice*:*join*: a user joins a conference call
+* *voice*:*leave*: a user leaves a conference call
+* *voice*:*new**\_**topic*: the conference topic was changed
+* *sms*:*new*: a sms sent by an user was received in the number
+
+	require 'connfu'
+	
+	TOKEN = "<app-token>"
+	
+	Connfu.application(TOKEN) {
+		
+	  listen(:voice) do |conference|
+	    conference.on(:join) do |call|
+	      puts "New inbound call from #{call[:from]} on number #{call[:to]}"
+	    end
+
+	    conference.on(:leave) do |call|
+	      puts "#{call[:from]} has left the conference #{call[:channel_name]}"
+	    end
+
+	    conference.on(:new_topic) do |topic|
+	      puts "New topic in the conference #{topic[:channel_name]}: #{topic[:content]}"
+	    end
+	  end
+	
+	  listen(:sms) do |sms|
+		  sms.on(:new) do |message|
+    	  puts "New inbound sms"
+    	  puts "#{message}"
+  		end
+	  end
+	}
+
+
+=== Handling twitter channels
+
+A twitter channel has one related event:
+
+* *twitter*:*new*: a new tweet sent by an associated twitter account reached the application
+
+	require 'connfu'
+
+	TOKEN = "<app-token>"
+
+	Connfu.application(TOKEN) {
+	
+	  listen(:twitter) do |twitter|
+
+	    twitter.on(:new) do |tweet|
+	      puts "#{tweet[:channel_name]} just posted a new tweet in the application: #{tweet.content}"
+	    end
+	
+	  end
+	
+	}
+
+
+=== Examples
+
+==== Conference room
+
+This application defines two channels, voice and twitter, and handles conference rooms using a predefined whitelist. 
+
+Conference attendees can also tweet information regarding the chat room using the hashtag #conference.
+
+    require 'connfu'
+
+	TOKEN = "<valid-app-token>"
+    NEW_CALL_MESSAGE = "new call received"
+
+    HANG_MESSAGE = "has left the call"
+
+    Connfu.application(TOKEN) {
+
+      listen(:voice) do
+        on(:join) do |call|
+          puts "#{NEW_CALL_MESSAGE} on number #{call[:destination]}"
+          conf = ConferenceApp::find_by_conference_number(call[:destination])
+          if conf.is_allowed?(call[:origin])
+            puts "whitelist number received"
+          else
+            puts "not whitelist number"
+          end
+        end
+
+        on(:hang) do |call|
+          puts "#{call[:origin]} #{HANG_MESSAGE} #{call[:destination]}"
+          ConferenceApp::find(call[:destination]).end(call[:origin])
+        end
+      end
+
+      listen(:twitter) do |channel|
+
+        channel.filter = "text has #conference"
+
+        on(:new) do |tweet|
+          puts "A new tweet arrived"
+          conf = ConferenceApp::find_by_twitter_user(tweet[:origin])
+          conf.wall.print("#{tweet[:origin]}: has tweeted #{tweet[:destination]}")
+        end
+
+      end
+
+      listen(:foo) do |channel|
+        on(:new) do |message|
+          puts "This is an unsupported channel"
+        end
+      end
+
+    }
+
+== Provisioning API
+
+With the provisioning API client you can manage your application channels.
+
+All the requests should be signed using a specific application *api_key*
+
+    require 'connfu'
+
+    application = Connfu::Provisioning::Application.new(api_key)
+
+Actually there are three available channel types:
+
+* *Voice*: retrieves events related to calls and inbound sms to a specific number
+* *Twitter*: retrieves tweets related to one or more twitter accounts
+* *RSS*: retrieves new posts in a RSS feed
+
+In the next subsections you can find examples about how to manage channels.
+
+Please check the folder *examples* for deeper information
+
+=== Voice channels
+
+The next sections show information about how to manage voice channels in an application.
+
+==== Create a Voice channel
+
+This snippet of code creates a voice channel and associates a phone number to the application.
+
+	require 'connfu'
+
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.create_voice_channel("my-voice-channel", "UK")
+  
+Optionally a third parameter can be used defining the channel privacy settings:
+
+  * Connfu::Provisioning::Voice::Channel::WHITELIST : only a specific set of phone numbers can join the conference
+  * Connfu::Provisioning::Voice::Channel::PUBLIC : any user can join the conference
+
+Valid country codes are _UK_ and _US_
+
+==== Retrieve all Voice channels
+
+This snippet of code retrieves information about the voice channels associated to the application.
+
+	require 'connfu'
+
+    application = Connfu::Provisioning::Application.new(api_key)
+	voice_channels = application.get_voice_channel
+
+==== Retrieve a Voice channel
+
+This snippet of code retrieves information about a specific voice channel associated to the application.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	voice_channel = application.get_voice_channel("my-voice-channel")
+
+==== Update Voice channel
+
+This snippet of code updates the topic, privacy setting, welcome\_message and rejected\_message associated to the voice channel.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	application.update_voice_channel("my-voice-channel", 
+		{:topic =>"new topic", 
+		:welcome_message => "Hello!", 
+		:rejected_message => "You're not allowed to join the conference.",
+		:privacy => Connfu::Provisioning::Voice::Privacy::PUBLIC})
+
+==== Delete a Voice channel
+
+This snippet of code deletes a voice channel previously created.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	application.delete_voice_channel("my-voice-channel")
+
+==== Voice Channel Whitelist
+
+Only a predefined set of numbers can join a conference created using a voice channel. Numbers must be included in the conference whitelist before joining the conference.
+
+===== Add a number to the whitelist
+
+This snippet of code adds a new user to the conference whitelist.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	application.add_whitelist("my-voice-channel", "paul", "0044654332")
+
+===== Retrieve a channel whitelist
+
+This snippet of code retrieves a conference whitelist.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	whitelist = application.get_whitelist("my-voice-channel")
+
+===== Delete the Voice channel whitelist
+
+This snippet of code deletes the whole conference whitelist.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	application.delete_whitelist("my-voice-channel")
+
+===== Delete a whitelist entry
+
+This snippet of code deletes a specific whitelist item.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	application.delete_whitelist("my-voice-channel", "0044654332")
+
+==== Voice channel numbers
+
+A voice channel can have more than one mapped phone number. This will enable users from different countries join a conference with local rates.
+
+===== Add a new number to a voice channel
+
+This snippet of code adds a new phone number to the voice channel. The desired country must be supported.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	application.add_phone("my-voice-channel", "UK")
+
+===== Remove a number from a voice channel
+
+This snippet of code removes a phone number from the voice channel and release the resource.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	application.delete_phone("my-voice-channel", "0044654332")
+
+===== Retrieve all the voice channel numbers
+
+This snippet of code retrieves a voice channel phone lists.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	phones = application.get_phones("my-voice-channel")
+
+=== Twitter channels
+
+==== Create Twitter channel
+
+This snippet of code creates a twitter channel with two twitter accounts and two hashtags to filter only those messages with a specific hashtag.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	application.create_twitter_channel("my-twitter-channel", 
+		{:origin => "juandebravo", :hashtags => ["ruby", "rails]})
+
+==== Retrieve all Twitter channels
+
+This snippet of code retrieves information about all the twitter channels previously created.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	twitter_channels = application.get_twitter_channel
+
+==== Retrieve a Twitter channel
+
+This snippet of code retrieves information about a specific twitter channel previously created.
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	twitter_channel = application.get_twitter_channel("my-twitter_channel")
+
+==== Delete a Twitter channel
+
+This snippet of code deletes a specific twitter channel previously created.
+
+
+	require 'connfu'
+
+	application = Connfu::Provisioning::Application.new(api_key)
+	application.delete_twitter_channel("my-twitter_channel")
+
+== License
+
+Check the file License.txt with information about GNU AFFERO GENERAL PUBLIC LICENSE Version 3
