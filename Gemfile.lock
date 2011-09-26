@@ -1,0 +1,120 @@
+PATH
+  remote: .
+  specs:
+    connfu-client (0.1)
+      activesupport (~> 3.0.8)
+      gli
+      rest-client
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    Saikuro (1.1.0)
+    activesupport (3.0.10)
+    addressable (2.2.6)
+    chronic (0.3.0)
+    churn (0.0.13)
+      chronic (>= 0.2.3)
+      hirb
+      json_pure
+      main
+      ruby_parser (~> 2.0.4)
+      sexp_processor (~> 3.0.3)
+    colored (1.2)
+    crack (0.3.1)
+    diff-lcs (1.1.3)
+    erubis (2.7.0)
+    flay (1.4.3)
+      ruby_parser (~> 2.0)
+      sexp_processor (~> 3.0)
+    flog (2.5.3)
+      ruby_parser (~> 2.0)
+      sexp_processor (~> 3.0)
+    gli (1.3.3)
+    haml (3.1.3)
+    hirb (0.5.0)
+    i18n (0.6.0)
+    json (1.6.1)
+    json_pure (1.6.1)
+    main (4.7.1)
+    metric_fu (2.1.1)
+      Saikuro (>= 1.1.0)
+      activesupport (>= 2.0.0)
+      chronic (~> 0.3.0)
+      churn (>= 0.0.7)
+      flay (>= 1.2.1)
+      flog (>= 2.3.0)
+      rails_best_practices (>= 0.6.4)
+      rcov (>= 0.8.3.3)
+      reek (>= 1.2.6)
+      roodi (>= 2.1.0)
+      syntax
+    metrical (0.0.5)
+      activesupport
+      metric_fu (~> 2.1.1)
+    mime-types (1.16)
+    multi_json (1.0.3)
+    nokogiri (1.5.0)
+    rails_best_practices (0.10.1)
+      activesupport
+      colored
+      erubis
+      haml
+      i18n
+      ruby-progressbar
+      ruby_parser
+    rcov (0.9.10)
+    rdoc (3.9.4)
+    reek (1.2.8)
+      ruby2ruby (~> 1.2)
+      ruby_parser (~> 2.0)
+      sexp_processor (~> 3.0)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
+    roodi (2.1.0)
+      ruby_parser
+    rspec (2.6.0)
+      rspec-core (~> 2.6.0)
+      rspec-expectations (~> 2.6.0)
+      rspec-mocks (~> 2.6.0)
+    rspec-core (2.6.4)
+    rspec-expectations (2.6.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.6.0)
+    ruby-progressbar (0.0.10)
+    ruby2ruby (1.3.0)
+      ruby_parser (~> 2.0)
+      sexp_processor (~> 3.0)
+    ruby_parser (2.0.6)
+      sexp_processor (~> 3.0)
+    sanitize (2.0.3)
+      nokogiri (< 1.6, >= 1.4.4)
+    sdoc (0.3.11)
+      json (>= 1.1.3)
+      rdoc (~> 3)
+      sanitize (~> 2)
+    sexp_processor (3.0.7)
+    simplecov (0.5.3)
+      multi_json (~> 1.0.3)
+      simplecov-html (~> 0.5.3)
+    simplecov-html (0.5.3)
+    syntax (1.0.0)
+    webmock (1.7.6)
+      addressable (> 2.2.5, ~> 2.2)
+      crack (>= 0.1.7)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  connfu-client!
+  flay (~> 1.4.2)
+  flog (~> 2.5.1)
+  metric_fu
+  metrical
+  reek (~> 1.2.8)
+  roodi (~> 2.1.0)
+  rspec
+  sdoc
+  simplecov (>= 0.4.0)
+  webmock
