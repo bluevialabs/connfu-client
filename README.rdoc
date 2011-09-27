@@ -1,4 +1,3 @@
-
 == Welcome to connFu
 
 connFu gem provides an easy way to get access to connFu platform using the defined DSL and the provisioning API.
@@ -97,27 +96,27 @@ A voice channel has four related events:
 * *voice*:*new**\_**topic*: the conference topic was changed
 * *sms*:*new*: a sms sent by an user was received in the number
 
-  	require 'connfu'	
-  	TOKEN = "<app-token>"	
-  	Connfu.application(TOKEN) {		
-  	  listen(:voice) do |conference|
-  	    conference.on(:join) do |call|
-  	      puts "New inbound call from #{call[:from]} on number #{call[:to]}"
-  	    end
-  	    conference.on(:leave) do |call|
-  	      puts "#{call[:from]} has left the conference #{call[:channel_name]}"
-  	    end
-  	    conference.on(:new_topic) do |topic|
-  	      puts "New topic in the conference #{topic[:channel_name]}: #{topic[:content]}"
-  	    end
-  	  end	
-  	  listen(:sms) do |sms|
-  		  sms.on(:new) do |message|
-      	  puts "New inbound sms"
-      	  puts "#{message}"
-    		end
-  	  end
-  	}
+      require 'connfu'	
+      TOKEN = "<app-token>"	
+      Connfu.application(TOKEN) {		
+        listen(:voice) do |conference|
+          conference.on(:join) do |call|
+            puts "New inbound call from #{call[:from]} on number #{call[:to]}"
+          end
+          conference.on(:leave) do |call|
+            puts "#{call[:from]} has left the conference #{call[:channel_name]}"
+          end
+          conference.on(:new_topic) do |topic|
+            puts "New topic in the conference #{topic[:channel_name]}: #{topic[:content]}"
+          end
+        end	
+        listen(:sms) do |sms|
+          sms.on(:new) do |message|
+            puts "New inbound sms"
+            puts "#{message}"
+          end
+        end
+      }
 
 
 === Handling twitter channels
@@ -146,8 +145,7 @@ This application defines two channels, voice and twitter, and handles conference
 Conference attendees can also tweet information regarding the chat room using the hashtag #conference.
 
     require 'connfu'
-
-	  TOKEN = "<valid-app-token>"
+    TOKEN = "<valid-app-token>"
     NEW_CALL_MESSAGE = "new call received"
 
     HANG_MESSAGE = "has left the call"
@@ -219,9 +217,9 @@ The next sections show information about how to manage voice channels in an appl
 
 This snippet of code creates a voice channel and associates a phone number to the application.
 
-  	require 'connfu'
-    application = Connfu::Provisioning::Application.new(api_key)
-    application.create_voice_channel("my-voice-channel", "UK")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.create_voice_channel("my-voice-channel", "UK")
   
 Optionally a third parameter can be used defining the channel privacy settings:
 
@@ -234,40 +232,37 @@ Valid country codes are _UK_ and _US_
 
 This snippet of code retrieves information about the voice channels associated to the application.
 
-  	require 'connfu'
-
-    application = Connfu::Provisioning::Application.new(api_key)
-  	voice_channels = application.get_voice_channel
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  voice_channels = application.get_voice_channel
 
 ==== Retrieve a Voice channel
 
 This snippet of code retrieves information about a specific voice channel associated to the application.
 
-  	require 'connfu'
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	voice_channel = application.get_voice_channel("my-voice-channel")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  voice_channel = application.get_voice_channel("my-voice-channel")
 
 ==== Update Voice channel
 
 This snippet of code updates the topic, privacy setting, welcome\_message and rejected\_message associated to the voice channel.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	application.update_voice_channel("my-voice-channel", 
-  		{:topic =>"new topic", 
-  		:welcome_message => "Hello!", 
-  		:rejected_message => "You're not allowed to join the conference.",
-  		:privacy => Connfu::Provisioning::Voice::Privacy::PUBLIC})
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.update_voice_channel("my-voice-channel", 
+    {:topic =>"new topic", 
+      :welcome_message => "Hello!", 
+      :rejected_message => "You're not allowed to join the conference.",
+      :privacy => Connfu::Provisioning::Voice::Privacy::PUBLIC})
 
 ==== Delete a Voice channel
 
 This snippet of code deletes a voice channel previously created.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	application.delete_voice_channel("my-voice-channel")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.delete_voice_channel("my-voice-channel")
 
 ==== Voice Channel Whitelist
 
@@ -277,37 +272,33 @@ Only a predefined set of numbers can join a conference created using a voice cha
 
 This snippet of code adds a new user to the conference whitelist.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	application.add_whitelist("my-voice-channel", "paul", "0044654332")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.add_whitelist("my-voice-channel", "paul", "0044654332")
 
 ===== Retrieve a channel whitelist
 
 This snippet of code retrieves a conference whitelist.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	whitelist = application.get_whitelist("my-voice-channel")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  whitelist = application.get_whitelist("my-voice-channel")
 
 ===== Delete the Voice channel whitelist
 
 This snippet of code deletes the whole conference whitelist.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	application.delete_whitelist("my-voice-channel")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.delete_whitelist("my-voice-channel")
 
 ===== Delete a whitelist entry
 
 This snippet of code deletes a specific whitelist item.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	application.delete_whitelist("my-voice-channel", "0044654332")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.delete_whitelist("my-voice-channel", "0044654332")
 
 ==== Voice channel numbers
 
@@ -317,28 +308,25 @@ A voice channel can have more than one mapped phone number. This will enable use
 
 This snippet of code adds a new phone number to the voice channel. The desired country must be supported.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	application.add_phone("my-voice-channel", "UK")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.add_phone("my-voice-channel", "UK")
 
 ===== Remove a number from a voice channel
 
 This snippet of code removes a phone number from the voice channel and release the resource.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	application.delete_phone("my-voice-channel", "0044654332")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.delete_phone("my-voice-channel", "0044654332")
 
 ===== Retrieve all the voice channel numbers
 
 This snippet of code retrieves a voice channel phone lists.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	phones = application.get_phones("my-voice-channel")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  phones = application.get_phones("my-voice-channel")
 
 === Twitter channels
 
@@ -346,39 +334,34 @@ This snippet of code retrieves a voice channel phone lists.
 
 This snippet of code creates a twitter channel with two twitter accounts and two hashtags to filter only those messages with a specific hashtag.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	application.create_twitter_channel("my-twitter-channel", 
-  		{:origin => "juandebravo", :hashtags => ["ruby", "rails]})
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.create_twitter_channel("my-twitter-channel", 
+        {:origin => "juandebravo", :hashtags => ["ruby", "rails]})
 
 ==== Retrieve all Twitter channels
 
 This snippet of code retrieves information about all the twitter channels previously created.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	twitter_channels = application.get_twitter_channel
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  twitter_channels = application.get_twitter_channel
 
 ==== Retrieve a Twitter channel
 
 This snippet of code retrieves information about a specific twitter channel previously created.
 
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	twitter_channel = application.get_twitter_channel("my-twitter_channel")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  twitter_channel = application.get_twitter_channel("my-twitter_channel")
 
 ==== Delete a Twitter channel
 
 This snippet of code deletes a specific twitter channel previously created.
 
-
-  	require 'connfu'
-
-  	application = Connfu::Provisioning::Application.new(api_key)
-  	application.delete_twitter_channel("my-twitter_channel")
+  require 'connfu'
+  application = Connfu::Provisioning::Application.new(api_key)
+  application.delete_twitter_channel("my-twitter_channel")
 
 == License
 
