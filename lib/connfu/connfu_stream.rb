@@ -130,7 +130,7 @@ module Connfu
           if json
             unless json.is_a?(Array) # Twitter - RSS message
               unless json.nil?
-                logger.debug("#{self.class} Got a twitter message")
+                logger.debug("#{self.class} Got a stream message")
                 temp_events << @formatter.format_message(json)
                 temp_events.nil? or events << temp_events.flatten
               else

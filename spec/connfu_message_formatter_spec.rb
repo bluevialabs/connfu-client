@@ -63,6 +63,19 @@ describe Connfu::ConnfuMessageFormatter do
       message.from.should eql("connfudev")
     end
 
+    it "should format properly a RSS event" do
+      raw = {"id"=>"http://identi.ca/bookmark/2eaba5c4-6377-4b59-8281-df8963c5ae25", "occurred_at"=> "2011-09-27 18:37:01 UTC", "actor"=>{"object_type"=>"person", "id"=>"http://identi.ca/user/530127", "display_name"=>"popl", "url"=>"http://identi.ca/user/530127"}, "verb"=>"post", "object"=>{"object_type"=>"article", "id"=>"http://identi.ca/bookmark/2eaba5c4-6377-4b59-8281-df8963c5ae25", "display_name"=>"Dobre ofert kredytu na firme pewne kredyty na firme", "summary"=>"Masz firme ?", "published" => "2011-09-27 18:37:01 UTC", "updated"=> "2011-09-27 18:37:01 UTC"}, "title"=>"Dobre ofert kredytu na firme pewne kredyty na firme", "provider"=>{"object_type"=>"service", "id"=>"http://identi.ca/", "display_name"=>"Identi.ca public timeline", "summary"=>"Identi.ca updates from everyone!", "url"=>"tag:identi.ca,2011-09-27:PublicTimeline", "published"=>"2011-09-27 18:39:52 UTC"}, "backchat"=>{"source"=>"WEBFEED", "bare_uri"=>"http://identi.ca/api/statuses/public_timeline.atom", "user_path"=>["http://identi.ca/api/statuses/public_timeline.atom"], "journal"=>["feed-distributor"], "uuid"=>"16acab10-e938-11e0-8d2b-12313b050905", "channels"=>["http://identi.ca/api/statuses/public_timeline.atom"]}}
+      message = Connfu::ConnfuMessageFormatter.format_message(raw)
+      message.should be_instance_of(Array)
+      message.length.should be(1)
+      message = message.pop
+      message.message_type.should eql("new")
+      message.channel_type.should eql("rss")
+      message.channel_name.should eql("http://identi.ca/api/statuses/public_timeline.atom")
+      message.to.should eql([])
+      message.from.should eql("http://identi.ca/user/530127")
+    end
+
     it "should discard a invalid twitter event because sender is invalid" do
       raw = "{\"id\":\"1111111\",\"remoteId\":\"87872349432582144\",\"summary\":\"\",\"content\":\":foo =&gt; \\\"bar\\\"\",\"sender\":\"\",\"recipients\":[],\"tags\":[],\"links\":[],\"attachments\":[],\"timeStamp\":\"2011-07-04T13:16:15.000Z\",\"isDeleted\":false,\"isPublic\":true,\"isArticle\":false}"
       message = Connfu::ConnfuMessageFormatter.format_message(raw)
@@ -83,6 +96,16 @@ describe Connfu::ConnfuMessageFormatter do
       message.should be_instance_of(Array)
       message.length.should be(0)
     end
+
+    it "should discard an event because the source is unknown" do
+      raw = {"id"=>"http://identi.ca/bookmark/2eaba5c4-6377-4b59-8281-df8963c5ae25", "occurred_at"=> "2011-09-27 18:37:01 UTC", "actor"=>{"object_type"=>"person", "id"=>"http://identi.ca/user/530127", "display_name"=>"popl", "url"=>"http://identi.ca/user/530127"}, "verb"=>"post", "object"=>{"object_type"=>"article", "id"=>"http://identi.ca/bookmark/2eaba5c4-6377-4b59-8281-df8963c5ae25", "display_name"=>"Dobre ofert kredytu na firme pewne kredyty na firme", "summary"=>"Masz firme ?", "published" => "2011-09-27 18:37:01 UTC", "updated"=> "2011-09-27 18:37:01 UTC"}, "title"=>"Dobre ofert kredytu na firme pewne kredyty na firme", "provider"=>{"object_type"=>"service", "id"=>"http://identi.ca/", "display_name"=>"Identi.ca public timeline", "summary"=>"Identi.ca updates from everyone!", "url"=>"tag:identi.ca,2011-09-27:PublicTimeline", "published"=>"2011-09-27 18:39:52 UTC"}, "backchat"=>{"source"=>"unknown", "bare_uri"=>"http://identi.ca/api/statuses/public_timeline.atom", "user_path"=>["http://identi.ca/api/statuses/public_timeline.atom"], "journal"=>["feed-distributor"], "uuid"=>"16acab10-e938-11e0-8d2b-12313b050905", "channels"=>["http://identi.ca/api/statuses/public_timeline.atom"]}}
+      message = Connfu::ConnfuMessageFormatter.format_message(raw)
+      message.should be_instance_of(Array)
+      puts message[0]
+      message.length.should be(0)
+    end
+
+
   end
 
 end

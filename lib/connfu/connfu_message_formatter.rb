@@ -68,14 +68,32 @@ module Connfu
 
         if message.is_a?(Array)
           message.each { |msg|
-            params = fetch_values.call(msg)
-            # include the message if valid params
-            params.nil? or values << Connfu::Message.new(params)
+            if msg.respond_to?("has_key?") && msg.has_key?("backchat") && msg["backchat"].has_key?("source")
+              case msg["backchat"]["source"].downcase
+              when "twitter"
+                params = fetch_values.call(msg)
+              when "webfeed"
+                params = format_rss_message(msg)
+              else
+                params = nil
+              end
+              # include the message if valid params
+              params.nil? or values << Connfu::Message.new(params)
+            end
           }
         else
-          params = fetch_values.call(message)
-          # include the message if valid params
-          params.nil? or values << Connfu::Message.new(params)
+          if message.respond_to?("has_key?") && message.has_key?("backchat") && message["backchat"].has_key?("source")
+            case message["backchat"]["source"].downcase
+            when "twitter"
+              params = fetch_values.call(message)
+            when "webfeed"
+              params = format_rss_message(message)
+            else
+              params = nil
+            end
+            # include the message if valid params
+            params.nil? or values << Connfu::Message.new(params)
+          end
         end
         values
       end
@@ -128,7 +146,29 @@ module Connfu
           []
         end
       end
-    end
 
+      def format_rss_message(msg)
+        begin
+          if msg.is_a?(Hash)
+            params = {
+                :id => msg["object"]["id"],
+                :content => msg["title"],
+                :message_type => "new",
+                :channel_type => "rss",
+                :channel_name => msg["backchat"]["bare_uri"],
+                :from => msg["actor"]["id"],
+                :to => []
+            }
+            params
+          else
+            logger.error("Invalid message format: #{msg}")
+            nil
+          end
+        rescue => ex
+          logger.error("Unable to fetch values from message #{msg}. Caught exception #{ex}")
+          nil
+        end
+      end
+    end
   end
 end

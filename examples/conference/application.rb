@@ -58,6 +58,13 @@ Connfu.log_level = Logger::DEBUG
     end
   end
 
+  listen(:rss) do |rss|
+    rss.on(:new) do |post|
+      puts "New RSS"
+      puts "#{post}"
+    end
+  end
+
   listen(:sms) do |sms|
     sms.on(:new) do |message|
       puts "New inbound sms"
