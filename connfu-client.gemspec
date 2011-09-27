@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.authors = ["connFu team", "Juan de Bravo"]
   s.email = ["devs@connfu.com", "juandebravo@gmail.com"]
-  s.homepage = "http://www.github.com/O2Labs/connfu-client"
+  s.homepage = "http://www.github.com/bluevialabs/connfu-client"
   s.summary = %q{connFu DSL to get access to connFu platform}
   s.description = %q{This gem provides a smooth access to connFu capabilities}
 
