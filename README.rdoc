@@ -97,26 +97,20 @@ A voice channel has four related events:
 * *voice*:*new**\_**topic*: the conference topic was changed
 * *sms*:*new*: a sms sent by an user was received in the number
 
-  	require 'connfu'
-	
-  	TOKEN = "<app-token>"
-	
-  	Connfu.application(TOKEN) {
-		
+  	require 'connfu'	
+  	TOKEN = "<app-token>"	
+  	Connfu.application(TOKEN) {		
   	  listen(:voice) do |conference|
   	    conference.on(:join) do |call|
   	      puts "New inbound call from #{call[:from]} on number #{call[:to]}"
   	    end
-
   	    conference.on(:leave) do |call|
   	      puts "#{call[:from]} has left the conference #{call[:channel_name]}"
   	    end
-
   	    conference.on(:new_topic) do |topic|
   	      puts "New topic in the conference #{topic[:channel_name]}: #{topic[:content]}"
   	    end
-  	  end
-	
+  	  end	
   	  listen(:sms) do |sms|
   		  sms.on(:new) do |message|
       	  puts "New inbound sms"
@@ -132,21 +126,15 @@ A twitter channel has one related event:
 
 * *twitter*:*new*: a new tweet sent by an associated twitter account reached the application
 
-  	require 'connfu'
-
-  	TOKEN = "<app-token>"
-
-  	Connfu.application(TOKEN) {
-	
-  	  listen(:twitter) do |twitter|
-
-  	    twitter.on(:new) do |tweet|
-  	      puts "#{tweet[:channel_name]} just posted a new tweet in the application: #{tweet.content}"
-  	    end
-	
-  	  end
-	
-  	}
+    require 'connfu'
+    TOKEN = "<app-token>"
+    Connfu.application(TOKEN) {
+      listen(:twitter) do |twitter|
+        twitter.on(:new) do |tweet|
+          puts "#{tweet[:channel_name]} just posted a new tweet in the application: #{tweet.content}"
+        end
+      end
+    }
 
 
 === Examples
