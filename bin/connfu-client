@@ -22,14 +22,14 @@ long_desc <<EOS
   Use scaffold to create a basic application that listens to all the available connFu channels.
   A connFu application can listen to one or more channels.
   Each channel will launch the application logic based on the event fetched using the streaming endpoint that belongs to the application.
-  You need a valid application token that can be retrieved in connFu web portal, http://www.connfu.com
+  You need a valid application token that can be retrieved in connFu web portal, https://www.connfu.com
 \n
 EOS
 
 arg_name "project_name"
 command :scaffold do |c|
   c.desc 'Channels the application should listen to'
-  c.default_value ":all"
+  c.default_value nil
   c.flag :c
 
   c.desc 'Main file that will contain the application logic'
@@ -57,7 +57,7 @@ command :scaffold do |c|
     end
     puts "    #{green("create")} #{args[0]}"
 
-    Connfu::Cli::Generator.run(args[0], nil, options[:f])
+    Connfu::Cli::Generator.run(args[0], options[:c], options[:f])
 
     puts "    #{green("create")} #{options[:f]}"
 
