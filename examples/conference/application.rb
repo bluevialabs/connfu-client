@@ -60,8 +60,7 @@ Connfu.log_level = Logger::DEBUG
 
   listen(:rss) do |rss|
     rss.on(:new) do |post|
-      puts "New RSS"
-      puts "#{post}"
+      puts "New post with title #{post[:content]} in the channel #{post[:channel_name]}"
     end
   end
 
