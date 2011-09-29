@@ -23,7 +23,7 @@ Connfu.logger = STDOUT
 
 Connfu.log_level = Logger::DEBUG
 
-@connfu = Connfu.application(token, "http://localhost:3000/v1") {
+@connfu = Connfu.application(token) {
 
   listen(:voice) do |conference|
     conference.on(:join) do |call|
