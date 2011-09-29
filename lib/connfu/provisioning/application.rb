@@ -134,7 +134,7 @@ module Connfu
         filter = []
 
         # filter = "tags:(tag1 AND tag2...)
-        if params.has_key?(:hashtags) and params[:hashtags].length > 0
+        if params.has_key?(:hashtags) && params[:hashtags].respond_to?(:length) && params[:hashtags].length > 0
           filter << "tags:(#{params[:hashtags].map { |hashtag| "#{hashtag}" }.join(" AND ")})"
         end
 
