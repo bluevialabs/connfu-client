@@ -126,7 +126,12 @@ module Connfu
         events = []
         temp_events = []
         chunk.each { |value|
-          json = ActiveSupport::JSON.decode(value)
+          begin
+            json = ActiveSupport::JSON.decode(value.force_encoding("UTF-8"))
+          rescue Exception => ex
+            json = nil
+            logger.error("Unable to decode JSON")
+          end
           if json
             unless json.is_a?(Array) # Twitter - RSS message
               unless json.nil?
