@@ -139,6 +139,10 @@ module Connfu
               item["phone_number"].eql?(message.to)
             }.length > 0 
           }
+        when "rss"
+          channels = channels.select { |channel| 
+            channel["uri"].eql?(message.channel_name)
+          }
         else
           logger.warn("This code should not be executed because the first select should avoid this")
           logger.info("Unexpected message: #{message.channel_type}")
