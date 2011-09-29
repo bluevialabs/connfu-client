@@ -10,15 +10,15 @@ module Connfu
 
       listen(:voice) do |conference|
         conference.on(:join) do |call|
-          puts "New inbound call from \#{call[:from]} on number \#{call[:to]}"
+          puts "\e[32mNew inbound call from \#{call[:from]} on number \#{call[:to]}\e[0m"
         end
 
         conference.on(:leave) do |call|
-          puts "\#{call[:from]} has left the conference \#{call[:channel_name]}"
+          puts "\e[32m\#{call[:from]} has left the conference \#{call[:channel_name]}\e[0m"
         end
 
         conference.on(:new_topic) do |topic|
-          puts "New topic in the conference \#{topic[:channel_name]}: \#{topic[:content]}"
+          puts "\e[32mNew topic in the conference \#{topic[:channel_name]}: \#{topic[:content]}\e[0m"
         end
       end
 
@@ -27,7 +27,7 @@ END
       
       listen(:twitter) do |twitter|
             twitter.on(:new) do |tweet|
-                puts "\#{tweet[:channel_name]} just posted a new tweet in the conference room: \#{tweet.content}"
+                puts "\e[32m\#{tweet[:channel_name]} just posted a new tweet in the conference room: \#{tweet.content}\e[0m"
             end
       end
       
@@ -36,7 +36,7 @@ END
 
       listen(:sms) do |sms|
             sms.on(:new) do |message|
-                puts "New inbound sms from \#{message[:from]}: \#{message[:content]}"
+                puts "\e[32mNew inbound sms from \#{message[:from]}: \#{message[:content]}\e[0m"
             end
       end
 
@@ -46,7 +46,7 @@ END
 
       listen(:rss) do |rss|
             rss.on(:new) do |post|
-                puts "New post with title \#{post[:channel_name]} in the blog \#{post[:bare_uri]}"
+                puts "\e[32mNew post with title \#{post[:channel_name]} in the blog \#{post[:channel_name]}\e[0m"
             end
       end
 
@@ -62,7 +62,7 @@ END
   token = "YOUR-VALID-CONNFU-TOKEN"
 
   Connfu.logger = STDOUT
-  Connfu.log_level = Logger::DEBUG
+  Connfu.log_level = Logger::INFO
 
   Connfu.application(token) {
   %{channels}
@@ -99,8 +99,6 @@ END
             key = $1
             values[key.to_sym]
           end
-          puts code
-          exit
           
           Dir.mkdir(name)
             Dir.chdir(name) do
