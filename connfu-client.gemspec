@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("sdoc")
   s.add_development_dependency("metric_fu")
   s.add_development_dependency("metrical")
+  s.add_development_dependency("rake")
 
   s.add_dependency("gli")
 
