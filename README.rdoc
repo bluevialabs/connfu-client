@@ -1,4 +1,4 @@
-== Welcome to connFu
+== Welcome to connfu-client {<img src="http://travis-ci.org/[bluevialabs]/[connfu-client].png" />}[http://travis-ci.org/[bluevialabs]/[connfu-client]]
 
 connFu gem provides an easy way to get access to connFu platform using the defined DSL and the provisioning API.
 
