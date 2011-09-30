@@ -28,6 +28,10 @@ EOS
 
 arg_name "project_name"
 command :scaffold do |c|
+  c.desc 'Application token'
+  c.default_value nil
+  c.flag :t
+
   c.desc 'Channels the application should listen to'
   c.default_value nil
   c.flag :c
@@ -48,7 +52,12 @@ command :scaffold do |c|
       end
       
       c.flags.each do |f|
-        usage << "\n     -#{f[0]}: #{f[1].description}. Default value: #{f[1].default_value}"
+        usage << "\n     -#{f[0]}: #{f[1].description}."
+        if f[1].default_value.nil? 
+          usage << " (Optional parameter)"
+        else
+          usage << " Default value: #{f[1].default_value}"
+        end
       end
       
       usage << "\n\n"
@@ -57,7 +66,7 @@ command :scaffold do |c|
     end
     puts "    #{green("create")} #{args[0]}"
 
-    Connfu::Cli::Generator.run(args[0], options[:c], options[:f])
+    Connfu::Cli::Generator.run(args[0], options[:c], options[:f], options[:t])
 
     puts "    #{green("create")} #{options[:f]}"
 

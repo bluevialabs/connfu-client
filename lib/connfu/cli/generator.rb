@@ -59,7 +59,7 @@ END
   ##
   # This application is an example of how to create a connFu application
 
-  token = "YOUR-VALID-CONNFU-TOKEN"
+  token = "%{token}"
 
   Connfu.logger = STDOUT
   Connfu.log_level = Logger::INFO
@@ -77,9 +77,10 @@ END
         # * **name** application name
         # * **channels** channels the application should listen to
         # * **file_name** main file that will hold the application logic
+        # * **token** connFu application token
         #
         # ==== Return
-        def run(name, channels = nil, file_name = "application.rb")
+        def run(name, channels = nil, file_name = "application.rb", token = nil)
 
           channels.is_a?(String) and channels = channels.split.map{|channel| channel.to_sym}
           
@@ -93,7 +94,10 @@ END
             channels.delete_if{|channel| !Connfu::ListenerChannel::CHANNEL_TYPES.include?(channel)}
             channels = channels.map{|item| channels_templates[item]}.join
           end
-          values = {:channels => channels}
+          values = {
+            :channels => channels,
+            :token => (token.nil? || token.empty?) ? "YOUR-VALID-CONNFU-TOKEN" : token
+          }
           
           code.gsub!(/%\{(\w+)\}/) do |match|
             key = $1
