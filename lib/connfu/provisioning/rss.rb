@@ -9,11 +9,11 @@ module Connfu
 
       def initialize(params)
         super(params)
-        self.type = "rss"
+        self.channel_type = "rss"
       end
 
       def to_hash
-        {"uid" => uid, "type" => type, "uri" => uri}
+        {"uid" => uid, "channel_type" => channel_type, "uri" => uri}
       end
 
     end

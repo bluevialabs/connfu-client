@@ -15,12 +15,12 @@ module Connfu
 
       def initialize(params)
         super(params)
-        self.type = "twitter"
+        self.channel_type = "twitter"
       end
 
       # Creates a hash with the Twitter instance info
       def to_hash
-        {"uid" => uid, "type" => type, "accounts" => accounts, "filter" => filter}
+        {"uid" => uid, "channel_type" => channel_type, "accounts" => accounts, "filter" => filter}
       end
 
     end

@@ -18,11 +18,11 @@ describe Connfu::Provisioning do
   RSpec::Matchers.define :be_well_defined_as_voice do |uid, phones|
     match do |actual| # actual should be the Connfu::Provisioning::Voice instance
       actual.should be_instance_of(Connfu::Provisioning::Voice)
-      ["uid", "type", "phones"].each { |key|
+      ["uid", "channel_type", "phones"].each { |key|
         actual.to_hash.should have_key(key)
       }
       actual.uid.should eql(uid)
-      actual.type.should eql("voice")
+      actual.channel_type.should eql("voice")
       
       actual.should respond_to("topic")
       actual.should respond_to("welcome_message")
@@ -46,12 +46,12 @@ describe Connfu::Provisioning do
   RSpec::Matchers.define :be_well_defined_as_twitter do |uid, twitter_accounts|
     match do |actual| # actual should be the Connfu::Provisioning::Twitter instance
       actual.should be_instance_of(Connfu::Provisioning::Twitter)
-      ["uid", "type", "accounts"].each { |key|
+      ["uid", "channel_type", "accounts"].each { |key|
         actual.to_hash.should have_key(key)
       }
 
       actual.uid.should eql(uid)
-      actual.type.should eql("twitter")
+      actual.channel_type.should eql("twitter")
 
       actual.accounts.should be_instance_of(Array)
       actual.accounts.length.should eql(twitter_accounts.length)

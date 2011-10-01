@@ -26,7 +26,7 @@ describe Connfu::Provisioning::Voice do
         [:uid, :topic, :welcome_message, :rejected_message].each { |attribute|
           voice.send(attribute).should eql(expected[attribute])
         }
-        voice.type.should eql("voice")
+        voice.channel_type.should eql("voice")
       end
     end
     
@@ -82,12 +82,12 @@ describe Connfu::Provisioning::Voice do
         match do |actual| # actual should be the Connfu::Provisioning::Voice instance
           actual.should be_instance_of(Hash)
           
-          ["uid", "type", "phones"].each{|key|
+          ["uid", "channel_type", "phones"].each{|key|
             actual.should have_key(key)
           }
 
           actual["uid"].should eql(uid)
-          actual["type"].should eql("voice")
+          actual["channel_type"].should eql("voice")
           
           actual["phones"].should be_instance_of(Array)
           actual["phones"].length.should eql(phones.length)
@@ -103,25 +103,25 @@ describe Connfu::Provisioning::Voice do
         end
       end
 
-      it "should retrieved uid, type and phones attributes (empty phones)" do
+      it "should retrieved uid, channel_type and phones attributes (empty phones)" do
         voice = Connfu::Provisioning::Voice.new(voice_attrs)
         voice.to_hash.should have_voice_details(VOICE_KEY, [])
       end
 
-      it "should retrieved uid, type and phones attributes (phones with elements)" do
+      it "should retrieved uid, channel_type and phones attributes (phones with elements)" do
         voice = Connfu::Provisioning::Voice.new(voice_attrs)
         voice << phone
         voice.to_hash.should have_voice_details(VOICE_KEY, [phone])
       end
 
-      it "should retrieved uid, type and phones attributes (phones two elements)" do
+      it "should retrieved uid, channel_type and phones attributes (phones two elements)" do
         voice = Connfu::Provisioning::Voice.new(voice_attrs)
         voice << phone
         voice << phone
         voice.to_hash.should have_voice_details(VOICE_KEY, [phone, phone])
       end
 
-      it "should retrieved uid, type and phones attributes (phones hundred elements)" do
+      it "should retrieved uid, channel_type and phones attributes (phones hundred elements)" do
         voice = Connfu::Provisioning::Voice.new(voice_attrs)
         data = []
         100.times do

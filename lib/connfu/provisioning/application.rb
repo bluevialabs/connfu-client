@@ -272,6 +272,32 @@ module Connfu
         @base.post("channels/voice/#{voice}/phones", {:country => country})
       end
 
+      ##
+      # Retrieve a voice channel dtmf tones, that's the list of actions associated to a IVR voice channel
+      # ==== Parameters
+      # * +voice+ Voice channel identifier
+      # * +dtmf+ (optional) specific Dtmf tone to retrieve. If it is not specified, all the list is fetched
+      def get_dtmf(voice, dtmf = "")
+        Dtmf.unmarshal(voice, ActiveSupport::JSON.decode(@base.get("channels/voice/#{voice}/dtmf/#{dtmf}")))
+      end
+
+      ##
+      # Delete one dtmf action or the whole dtmf actions
+      # ==== Parameters
+      # * +voice+: Voice channel identifier
+      # * +dtmf+: specific dtmf tone to delete.
+      def delete_dtmf(voice, dtmf)
+        @base.delete("channels/voice/#{voice}/dtmf/#{dtmf}")
+      end
+
+      ##
+      # Add a new dtmf action to the Voice channel
+      # ==== Parameters
+      # * +voice+: Voice channel identifier
+      # * +dtmf+: for the phone number to be allocated
+      def add_dtmf(voice, tone, message)
+        @base.post("channels/voice/#{voice}/dtmf", {:tone => tone, :message => message})
+      end
 
       ##
       # Voice channel Whitelist management

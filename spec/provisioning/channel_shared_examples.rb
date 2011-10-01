@@ -12,7 +12,7 @@ def channel_attrs
 end
 
 
-shared_examples_for "Channel" do |channel, type|
+shared_examples_for "Channel" do |channel, channel_type|
 
 
   RSpec::Matchers.define :have_defined_channel_attributes do |expected|
@@ -20,7 +20,7 @@ shared_examples_for "Channel" do |channel, type|
       channel_attrs.keys.each { |attribute|
         channel.send(attribute).should eql(expected[attribute])
       }
-      channel.type.should be_instance_of(String)
+      channel.channel_type.should be_instance_of(String)
       channel.uid.should be_instance_of(String)
     end
   end

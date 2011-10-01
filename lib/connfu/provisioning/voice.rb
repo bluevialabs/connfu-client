@@ -15,7 +15,7 @@ module Connfu
       end
       
       # Voice channel attributes that could be updated
-      UPDATE_ATTRIBUTES = ["topic", "welcome_message", "rejected_message", "privacy"]
+      UPDATE_ATTRIBUTES = ["topic", "welcome_message", "rejected_message", "privacy", "type"]
 
       _values = UPDATE_ATTRIBUTES.dup
       _values.each { |value|
@@ -39,11 +39,11 @@ module Connfu
 
       def initialize(params)
         super(params)
-        self.type = "voice"
+        self.channel_type = "voice"
       end
 
       def to_hash
-        {"uid" => uid, "type" => type, "phones" => phones.map(&:to_hash)}
+        {"uid" => uid, "channel_type" => channel_type, "phones" => phones.map(&:to_hash)}
       end
 
       # access the Voice channel Whitelist

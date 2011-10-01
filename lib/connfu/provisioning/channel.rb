@@ -17,12 +17,12 @@ module Connfu
       attr_accessor :uid
 
       # channel type
-      attr_accessor :type
+      attr_accessor :channel_type
 
       # Creates a Channel instance using a Hash values
       # It creates an instance variable per each hash key
       def initialize(params)
-        self.type = self.class.to_s.downcase
+        self.channel_type = self.class.to_s.downcase
         params.each_pair { |key, value|
           self.instance_variable_set("@#{key}", value)
         }
@@ -52,14 +52,14 @@ module Connfu
         #
         # * +data+ - hash containing channel information retrieved using the connFu API
         def unmarshal(data)
-
-          # Helper to get the channel class using the type attribute (we are
+          # Helper to get the channel class using the channel_type attribute (we are
           # retrieving all the channels) or the client class (we are retrieving
           # specific a channel type)
           create_channel = lambda { |channel|
-            if channel.has_key?("type") # get the class from type attribute (get all channels)
-              type = channel["type"].capitalize
-              Connfu::Provisioning.const_get(type).new(channel)
+            puts channel
+            if channel.has_key?("type") && ListenerChannel::CHANNEL_TYPES.include?(channel["type"].to_sym) # get the class from type attribute (get all channels)
+              channel_type = channel["type"].capitalize
+              Connfu::Provisioning.const_get(channel_type).new(channel)
             else # get the class from class
               self.new(channel)
             end
