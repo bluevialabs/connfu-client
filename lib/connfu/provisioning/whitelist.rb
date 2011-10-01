@@ -3,10 +3,6 @@ module Connfu
   module Provisioning
 
     ##
-    # This class defines a whitelist user (whitelist item)
-    WhitelistUser = Struct.new(:name, :phone)
-
-    ##
     # This class models a conference whitelist
     class Whitelist
 
