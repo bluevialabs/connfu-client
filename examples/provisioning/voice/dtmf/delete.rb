@@ -14,11 +14,11 @@ ARGV.length < 2 and
 
 api_key = ARGV.shift
 channel = ARGV.shift
-dtmf = if ARGV.length < 3
-                ""
-              else
-                ARGV.shift
-              end
+dtmf = if ARGV.length < 1
+         ""
+       else
+         ARGV.shift
+       end
 
 
 application = Connfu::Provisioning::Application.new(api_key, CONNFU_ENDPOINT)

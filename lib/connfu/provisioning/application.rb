@@ -151,11 +151,12 @@ module Connfu
             users = params[:origin]
           end
 
-          @base.post("channels/twitter",
+          data = @base.post("channels/twitter",
                      {:uid => key,
                       :accounts => users.collect { |item| {:name => item} },
                       :filter => filter
                      })
+          Twitter.unmarshal(ActiveSupport::JSON.decode(data))
         else
           # retrieve users mentions
           users = params[:mentions]
@@ -165,11 +166,12 @@ module Connfu
             user_filter = filter.dup
             user_filter << "recipients:#{user}"
 
-            locations << @base.post("channels/twitter",
+            data = @base.post("channels/twitter",
                                     {:uid => key,
                                      :accounts => [{:name => user}],
                                      :filter => "(#{user_filter.join(' AND ')})"
                                     })
+            locations << Twitter.unmarshal(ActiveSupport::JSON.decode(data))
           }
           locations
         end
@@ -231,7 +233,7 @@ module Connfu
       # * +country+ country to allocate a DID
       #
       def create_voice_channel(name, country, privacy = Voice::Privacy::WHITELIST)
-        @base.post("channels/voice", {:uid => name, :country => country, :privacy => privacy})
+        Voice.unmarshal(ActiveSupport::JSON.decode(@base.post("channels/voice", {:uid => name, :country => country, :privacy => privacy})))
       end
 
       ##
@@ -322,22 +324,25 @@ module Connfu
         @base.delete("channels/voice/#{voice}/whitelisted/#{number}")
       end
 
-      #
+      ##
       # Create a new item in the whitelist
-      # @param *args:
+      # ===== Parameters
+      # * *args:
       #      - First parameter: voice channel identifier
       #      - Second parameter can be either:
       #          - WhitelistUser object with the name and phone information
       #          - two arguments name, phone
       #
+      # ==== Return
+      # * Whitelist object
       def add_whitelist(*args)
-
+        voice_id = args[0]
         if args.length.eql?(2)
-          @base.post("channels/voice/#{args[0]}/whitelisted", {:name => args[1].name, :phone => args[1].phone})
+          whitelist = @base.post("channels/voice/#{voice_id}/whitelisted", {:name => args[1].name, :phone => args[1].phone})
         else
-          @base.post("channels/voice/#{args[0]}/whitelisted", {:name => args[1], :phone => args[2]})
+          whitelist = @base.post("channels/voice/#{voice_id}/whitelisted", {:name => args[1], :phone => args[2]})
         end
-
+        WhitelistUser.unmarshal(ActiveSupport::JSON.decode(whitelist))
       end
 
       #
@@ -374,7 +379,9 @@ module Connfu
       # @param uri RSS endpoint
       #
       def create_rss_channel(name, uri)
-        @base.post("channels/rss", {:uid => name, :uri => uri})
+        data = @base.post("channels/rss", {:uid => name, :uri => uri})
+        data = ActiveSupport::JSON.decode(data)
+        Rss.unmarshal(data)
       end
 
       #

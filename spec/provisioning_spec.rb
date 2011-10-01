@@ -85,56 +85,57 @@ describe Connfu::Provisioning do
       it "should create a Twitter channel application with one origin speficied as array" do
         stub_request(:post, "#{ENDPOINT}/channels/twitter").
             with(:body => create_twitter_channel_request(["juan"]), :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
+            to_return(:status => 201, :body => "{'accounts':[{'name':'juan'}],'created_at':'2011-09-06T05:33:39+00:00','filter':'','uid':'#{TWITTER_KEY}','updated_at':'2011-09-06T05:33:39+00:00'}", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
 
         response = @application.create_twitter_channel(TWITTER_KEY, ["juan"])
-        response.should eql("#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}")
+        response.should be_well_defined_as_twitter(TWITTER_KEY, ['juan'])
       end
 
       it "should create a Twitter channel application with one origins speficied as hash (string)" do
         stub_request(:post, "#{ENDPOINT}/channels/twitter").
             with(:body => create_twitter_channel_request(["juan"]), :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
+            to_return(:status => 201, :body => "{'accounts':[{'name':'juan'}],'created_at':'2011-09-06T05:33:39+00:00','filter':'','uid':'#{TWITTER_KEY}','updated_at':'2011-09-06T05:33:39+00:00'}", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
 
         response = @application.create_twitter_channel(TWITTER_KEY, {:origin => "juan"})
-        response.should eql("#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}")
+        response.should be_well_defined_as_twitter(TWITTER_KEY, ['juan'])
       end
 
       it "should create a Twitter channel application with one origins speficied as hash (array)" do
         stub_request(:post, "#{ENDPOINT}/channels/twitter").
             with(:body => create_twitter_channel_request(["juan"]), :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
+            to_return(:status => 201, :body => "{'accounts':[{'name':'juan'}],'created_at':'2011-09-06T05:33:39+00:00','filter':'','uid':'#{TWITTER_KEY}','updated_at':'2011-09-06T05:33:39+00:00'}", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
 
         response = @application.create_twitter_channel(TWITTER_KEY, {:origin => ["juan"]})
-        response.should eql("#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}")
+        response.should be_well_defined_as_twitter(TWITTER_KEY, ['juan'])
       end
 
       it "should create a Twitter channel application with two origins speficied as Hash" do
         stub_request(:post, "#{ENDPOINT}/channels/twitter").
             with(:body => create_twitter_channel_request(["juan", "connfu"]), :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
+            to_return(:status => 201, :body => "{'accounts':[{'name':'juan'},{'name':'connfu'}],'created_at':'2011-09-06T05:33:39+00:00','filter':'','uid':'#{TWITTER_KEY}','updated_at':'2011-09-06T05:33:39+00:00'}", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
 
         response = @application.create_twitter_channel(TWITTER_KEY, {:origin => ["juan", "connfu"]})
-        response.should eql("#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}")
+        response.should be_well_defined_as_twitter(TWITTER_KEY, ['juan', 'connfu'])
       end
 
       it "should create a Twitter channel application with two origins speficied as Array" do
         stub_request(:post, "#{ENDPOINT}/channels/twitter").
             with(:body => create_twitter_channel_request(["juan", "connfu"]), :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
+            to_return(:status => 201, :body => "{'accounts':[{'name':'juan'},{'name':'connfu'}],'created_at':'2011-09-06T05:33:39+00:00','filter':'','uid':'#{TWITTER_KEY}','updated_at':'2011-09-06T05:33:39+00:00'}", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
 
         response = @application.create_twitter_channel(TWITTER_KEY, ["juan", "connfu"])
-        response.should eql("#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}")
+        response.should be_well_defined_as_twitter(TWITTER_KEY, ['juan', 'connfu'])
       end
 
       it "should create a Twitter channel application with one mention" do
         stub_request(:post, "#{ENDPOINT}/channels/twitter").
             with(:body => create_twitter_channel_request(["juan"], TWITTER_KEY, "(recipients:juan)"), :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
+            to_return(:status => 201, :body => "{'accounts':[{'name':'juan'}],'created_at':'2011-09-06T05:33:39+00:00','filter':'','uid':'#{TWITTER_KEY}','updated_at':'2011-09-06T05:33:39+00:00'}", :headers => {:location => "#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}"})
 
         response = @application.create_twitter_channel(TWITTER_KEY, {:mentions => ["juan"]})
-        response.should be_kind_of(Array)
-        response[0].should eql("#{ENDPOINT}/channels/twitter/#{TWITTER_KEY}")
+        response.should be_instance_of(Array)
+        response.length.should be(1)
+        response[0].should be_well_defined_as_twitter(TWITTER_KEY, ["juan"])
       end
 
       it "should retrieve a channel information when the channel exists" do
@@ -180,29 +181,32 @@ describe Connfu::Provisioning do
 
       it "should create a Voice channel application with the default privacy attribute" do
         stub_request(:post, "#{ENDPOINT}/channels/voice").
-            with(:body => "{\"uid\":\"#{VOICE_KEY}\",\"country\":\"de\",\"privacy\":\"whitelisted\"}", :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/voice/#{VOICE_KEY}"})
+            with(:body => "{\"uid\":\"#{VOICE_KEY}\",\"country\":\"#{COUNTRY}\",\"privacy\":\"whitelisted\"}", :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
+            to_return(:status => 201, :body => "{'created_at':'2011-08-25T14:16:44+03:00','rejected_message':'You are not allowed to join this conference','privacy':'whitelisted','topic':'hello_man','uid':'#{VOICE_KEY}','updated_at':'2011-08-25T15:10:12+03:00','welcome_message':'Welcome to connFu, you are going to join the conference','phones':[{'country':'#{COUNTRY}','phone_number':'#{PHONE_NUMBER}'}]}", :headers => {:location => "#{ENDPOINT}/channels/voice/#{VOICE_KEY}"})
 
-        response = @application.create_voice_channel(VOICE_KEY, "de")
-        response.should eql("#{ENDPOINT}/channels/voice/#{VOICE_KEY}")
+        response = @application.create_voice_channel(VOICE_KEY, COUNTRY)
+        response.should be_well_defined_as_voice(VOICE_KEY, [{:phone_number => PHONE_NUMBER, :country => COUNTRY}])
+        response.privacy.should eql("whitelisted")
       end
 
       it "should create a Voice channel application with a privacy attribute (public)" do
         stub_request(:post, "#{ENDPOINT}/channels/voice").
-            with(:body => "{\"uid\":\"#{VOICE_KEY}\",\"country\":\"de\",\"privacy\":\"public\"}", :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/voice/#{VOICE_KEY}"})
+            with(:body => "{\"uid\":\"#{VOICE_KEY}\",\"country\":\"#{COUNTRY}\",\"privacy\":\"public\"}", :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
+            to_return(:status => 201, :body => "{'created_at':'2011-08-25T14:16:44+03:00','rejected_message':'You are not allowed to join this conference','privacy':'public','topic':'hello_man','uid':'#{VOICE_KEY}','updated_at':'2011-08-25T15:10:12+03:00','welcome_message':'Welcome to connFu, you are going to join the conference','phones':[{'country':'#{COUNTRY}','phone_number':'#{PHONE_NUMBER}'}]}", :headers => {:location => "#{ENDPOINT}/channels/voice/#{VOICE_KEY}"})
 
-        response = @application.create_voice_channel(VOICE_KEY, "de", Connfu::Provisioning::Voice::Privacy::PUBLIC)
-        response.should eql("#{ENDPOINT}/channels/voice/#{VOICE_KEY}")
+        response = @application.create_voice_channel(VOICE_KEY, COUNTRY, Connfu::Provisioning::Voice::Privacy::PUBLIC)
+        response.should be_well_defined_as_voice(VOICE_KEY, [{:phone_number => PHONE_NUMBER, :country => COUNTRY}])
+        response.privacy.should eql("public")
       end
 
       it "should create a Voice channel application with a privacy attribute (whitelisted)" do
         stub_request(:post, "#{ENDPOINT}/channels/voice").
-            with(:body => "{\"uid\":\"#{VOICE_KEY}\",\"country\":\"de\",\"privacy\":\"whitelisted\"}", :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/voice/#{VOICE_KEY}"})
+            with(:body => "{\"uid\":\"#{VOICE_KEY}\",\"country\":\"#{COUNTRY}\",\"privacy\":\"whitelisted\"}", :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
+            to_return(:status => 201, :body => "{'created_at':'2011-08-25T14:16:44+03:00','rejected_message':'You are not allowed to join this conference','privacy':'whitelisted','topic':'hello_man','uid':'#{VOICE_KEY}','updated_at':'2011-08-25T15:10:12+03:00','welcome_message':'Welcome to connFu, you are going to join the conference','phones':[{'country':'#{COUNTRY}','phone_number':'#{PHONE_NUMBER}'}]}", :headers => {:location => "#{ENDPOINT}/channels/voice/#{VOICE_KEY}"})
 
-        response = @application.create_voice_channel(VOICE_KEY, "de", Connfu::Provisioning::Voice::Privacy::WHITELIST)
-        response.should eql("#{ENDPOINT}/channels/voice/#{VOICE_KEY}")
+        response = @application.create_voice_channel(VOICE_KEY, COUNTRY, Connfu::Provisioning::Voice::Privacy::WHITELIST)
+        response.should be_well_defined_as_voice(VOICE_KEY, [{:phone_number => PHONE_NUMBER, :country => COUNTRY}])
+        response.privacy.should eql("whitelisted")
       end
 
       it "should retrieve a channel information when the channel exists" do
@@ -419,22 +423,24 @@ describe Connfu::Provisioning do
 
           stub_request(:post, "#{ENDPOINT}/channels/voice/#{VOICE_KEY}/whitelisted").
               with(:body => "{\"name\":\"juan\",\"phone\":\"#{PHONE_NUMBER}\"}", :headers => {'Accept'=>'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-              to_return(:status => 200, :body => "", :headers => {})
+              to_return(:status => 200, :body => "{\"name\":\"juan\",\"phone\":\"#{PHONE_NUMBER}\"}", :headers => {:location => "#{ENDPOINT}/channels/voice/#{VOICE_KEY}/whitelisted/#{PHONE_NUMBER}"})
 
           response = @application.add_whitelist(VOICE_KEY, 'juan', PHONE_NUMBER)
-          response.should eql("")
-
+          response.should be_instance_of(Connfu::Provisioning::WhitelistUser)
+          response.name.should eql("juan")
+          response.phone.should eql(PHONE_NUMBER)
         end
 
         it "should create a whitelist number with 1 parameter (WhitelistUser)" do
 
           stub_request(:post, "#{ENDPOINT}/channels/voice/#{VOICE_KEY}/whitelisted").
               with(:body => "{\"name\":\"juan\",\"phone\":\"#{PHONE_NUMBER}\"}", :headers => {'Accept'=>'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-              to_return(:status => 200, :body => "", :headers => {})
+              to_return(:status => 200, :body => "{'name':'juan','phone':'#{PHONE_NUMBER}'}", :headers => {:location => "#{ENDPOINT}/channels/voice/#{VOICE_KEY}/whitelisted/#{PHONE_NUMBER}"})
 
           response = @application.add_whitelist(VOICE_KEY, Connfu::Provisioning::WhitelistUser.new('juan', PHONE_NUMBER))
-          response.should eql("")
-
+          response.should be_instance_of(Connfu::Provisioning::WhitelistUser)
+          response.name.should eql("juan")
+          response.phone.should eql(PHONE_NUMBER)
         end
 
         it "should update a whitelist number with 1 parameter (WhitelistUser)" do
@@ -454,10 +460,11 @@ describe Connfu::Provisioning do
       it "should create a RSS channel application" do
         stub_request(:post, "#{ENDPOINT}/channels/rss").
             with(:body => "{\"uid\":\"#{RSS_KEY}\",\"uri\":\"http://connfu.com/rss\"}", :headers => {'Accept'=>'application/json', 'Content-Type' => 'application/json', 'AUTH_TOKEN' => "#{API_KEY}"}).
-            to_return(:status => 201, :body => "", :headers => {:location => "#{ENDPOINT}/channels/voice/#{RSS_KEY}"})
+            to_return(:status => 201, :body => "{'created_at':'2011-07-17T20:57:01+03:00','uri':'http://connfu.com/rss','uid':#{RSS_KEY},'updated_at':'2011-07-17T20:57:01+03:00'}", :headers => {:location => "#{ENDPOINT}/channels/voice/#{RSS_KEY}"})
 
-        response = @application.create_rss_channel(RSS_KEY, "http://connfu.com/rss")
-        response.should eql("#{ENDPOINT}/channels/voice/#{RSS_KEY}")
+        rss = @application.create_rss_channel(RSS_KEY, "http://connfu.com/rss")
+        rss.uid.should eql(RSS_KEY)
+        rss.uri.should eql("http://connfu.com/rss")
       end
 
       it "should retrieve a RSS channel information when the channel exists" do

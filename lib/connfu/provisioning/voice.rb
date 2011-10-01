@@ -1,4 +1,3 @@
-require 'connfu/provisioning/whitelist'
 
 module Connfu
 

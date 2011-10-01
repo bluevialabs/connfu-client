@@ -41,10 +41,6 @@ module Connfu
         RestClient.post("#{@endpoint}/#{path}", ActiveSupport::JSON.encode(body), headers) { |response, request, result|
           case response.code
             when 200..201
-              # If there is a :location header, return it
-              if response.headers.has_key?(:location)
-                return response.headers[:location]
-              end
               # else, do the normal stuff
               if block_given?
                 response.return!(request, result, &Proc.new)

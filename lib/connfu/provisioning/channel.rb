@@ -56,7 +56,6 @@ module Connfu
           # retrieving all the channels) or the client class (we are retrieving
           # specific a channel type)
           create_channel = lambda { |channel|
-            puts channel
             if channel.has_key?("type") && ListenerChannel::CHANNEL_TYPES.include?(channel["type"].to_sym) # get the class from type attribute (get all channels)
               channel_type = channel["type"].capitalize
               Connfu::Provisioning.const_get(channel_type).new(channel)
