@@ -59,8 +59,12 @@ module Connfu
             if channel.has_key?("type") && ListenerChannel::CHANNEL_TYPES.include?(channel["type"].to_sym) # get the class from type attribute (get all channels)
               channel_type = channel["type"].capitalize
               Connfu::Provisioning.const_get(channel_type).new(channel)
-            else # get the class from class
-              self.new(channel)
+            else
+              if self.eql?(Channel) # is a conference or DTMF
+                Connfu::Provisioning::Voice.new(channel)
+              else # get the class from class
+                self.new(channel)
+              end
             end
           }
 
