@@ -87,8 +87,8 @@ module Connfu
       @app_channels = channels.map { |channel| channel.to_hash }
 
       # Duplicate voice channels to sms channels
-      sms = channels.select { |channel| channel.type.eql?("voice") }
-      sms.map!{|channel| channel.type = "sms"; channel.to_hash}
+      sms = channels.select { |channel| channel.channel_type.eql?("voice") }
+      sms.map!{|channel| channel.channel_type = "sms"; channel.to_hash}
 
       sms.each{|channel|
         @app_channels << channel
