@@ -33,10 +33,10 @@ describe Connfu::Dispatcher do
 
   context "set_channels" do
     let(:app_channels) do
-      [{"uid"=>"twitter", "type"=>"twitter", "accounts"=>[{"name"=>"juandebravo"}, {"name"=>"connfudev"}], "filter"=>""},
-       {"uid"=>"juan-voice", "type"=>"sms", "phones" => [{"country"=>"UK", "phone_number"=>"9876"}]},
-       {"uid"=>"juan-voice", "type"=>"voice", "phones" => [{"country"=>"UK", "phone_number"=>"9876"}]},
-       {"uid"=>"channel-1312722260", "type"=>"twitter", "accounts"=>[{"name"=>"juandebravo"}, {"name"=>"finnstr"}], "filter"=>""}]
+      [{"uid"=>"twitter", "channel_type"=>"twitter", "accounts"=>[{"name"=>"juandebravo"}, {"name"=>"connfudev"}], "filter"=>""},
+       {"uid"=>"juan-voice", "channel_type"=>"sms", "phones" => [{"country"=>"UK", "phone_number"=>"9876"}]},
+       {"uid"=>"juan-voice", "channel_type"=>"voice", "phones" => [{"country"=>"UK", "phone_number"=>"9876"}]},
+       {"uid"=>"channel-1312722260", "channel_type"=>"twitter", "accounts"=>[{"name"=>"juandebravo"}, {"name"=>"finnstr"}], "filter"=>""}]
     end
 
     let(:message_details) do

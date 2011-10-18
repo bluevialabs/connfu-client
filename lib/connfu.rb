@@ -17,6 +17,7 @@ module Connfu
   autoload :Listener, 'connfu/listener'
   autoload :ListenerChannel, 'connfu/listener_channel'
   autoload :Provisioning, 'connfu/provisioning'
+  autoload :Message, 'connfu/message'
 
 
   # connFu provisioning API endpoint
