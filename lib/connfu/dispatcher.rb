@@ -116,7 +116,7 @@ module Connfu
       channel_type = message.channel_type
 
       # select channels with the same channel_type as the incoming message
-      channels = @app_channels.select { |channel| channel["type"].eql?(channel_type) }
+      channels = @app_channels.select { |channel| channel["channel_type"].eql?(channel_type) }
 
       # filter channels
       case message.channel_type
