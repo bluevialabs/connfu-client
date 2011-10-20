@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    connfu-client (0.1.2)
+    connfu-client (0.1.6)
       activesupport (~> 3.0.8)
       gli
       rest-client
